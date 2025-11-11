@@ -18,7 +18,7 @@ jobs:
       - name: Wait for database_init(Dev environment)
         run: |
           timeout=60
-          while ! docker compose ps dbinit | grep -q "exited (0)"; do
+          while ! docker compose -f docker-compose.yml -f docker-compose.dev.yml ps dbinit | grep -q "exited (0)"; do
             sleep 1
             timeout=$((timeout-1))
             if [ $timeout -eq 0 ]; then
@@ -30,7 +30,7 @@ jobs:
 
       - name: Test PostgreSQL connection and table creation(Dev environment)
         run: |
-          docker compose exec -T db psql -U proguser -d prog -c "\dt" | grep visits
+          docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T db psql -U proguser -d prog -c "\dt" | grep visits
           echo "Database table verified"
 
       - name: Wait for web to be ready(Dev environment)
@@ -70,7 +70,7 @@ jobs:
       - name: Wait for database_init(Prod environment)
         run: |
           timeout=60
-          while ! docker compose ps dbinit | grep -q "exited (0)"; do
+          while ! docker compose -f docker-compose.yml -f docker-compose.prod.yml ps dbinit | grep -q "exited (0)"; do
             sleep 1
             timeout=$((timeout-1))
             if [ $timeout -eq 0 ]; then
@@ -82,7 +82,7 @@ jobs:
 
       - name: Test PostgreSQL connection and table creation(Prod environment)
         run: |
-          docker compose exec -T db psql -U proguser -d prog -c "\dt" | grep visits
+          docker compose -f docker-compose.yml -f docker-compose.prod.yml exec -T db psql -U proguser -d prog -c "\dt" | grep visits
           echo "Database table verified"
 
       - name: Wait for web to be ready(Prod environment)
@@ -106,7 +106,7 @@ jobs:
           fi
           echo "Ping test passed!"
 
-      - name: Stop services(Dev environment)
+      - name: Stop services(Prod environment)
         run: docker compose down
         
       - name: Show logs on failure
