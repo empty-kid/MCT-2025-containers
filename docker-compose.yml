@@ -34,7 +34,7 @@ services:
       dockerfile: Dockerfile.prog
     restart: unless-stopped
     ports:
-      - 8001:8000
+      - 5000:8000
     environment:
       POSTGRES_HOST: db
       POSTGRES_DB: prog
